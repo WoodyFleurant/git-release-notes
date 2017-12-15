@@ -12,7 +12,7 @@ var argv = require("optimist").usage("git-release-notes [<options>] <since>..<un
 		"default": "(.*)"
 	})
 	.options("z", {
-		"alias": "commitfilter",
+		"alias": "commit-filter",
 		"default": "(.*)"
 	})
 	.options("m", {
@@ -93,7 +93,7 @@ fs.readFile(template, function (err, templateContent) {
 				meaning: Array.isArray(options.m) ? options.m: [options.m],
 				cwd: options.p,
 				mergeCommits: options.c,
-				commitfilter: new RegExp(options.z)
+				commitFilter: new RegExp(options.z)
 			}, function (commits) {
 				postProcess(templateContent, commits);
 			});
@@ -117,7 +117,7 @@ function getOptions (callback) {
 						m: stored.m || stored.meaning || argv.m,
 						p: stored.p || stored.path || argv.p,
 						c: stored.c || stored.mergeCommits || argv.c,
-						z: stored.z || stored.commitfilter || argv.z
+						z: stored.z || stored.commitFilter || argv.z
 					};
 				} catch (ex) {
 					console.error("Invalid JSON in configuration file");
