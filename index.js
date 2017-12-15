@@ -1,46 +1,51 @@
 #!/usr/bin/env node
 var argv = require("optimist").usage("git-release-notes [<options>] <since>..<until> <template>")
-.options("f", {
-	"alias": "file"
-})
-.options("p", {
-	"alias": "path",
-	"default": process.cwd()
-})
-.options("t", {
-	"alias": "title",
-	"default": "(.*)"
-})
-.options("m", {
-	"alias": "meaning",
-	"default": ['type']
-})
-.options("b", {
-	"alias": "branch",
-	"default": "master"
-})
-.options("s", {
-	"alias": "script"
-})
-.boolean("c")
-.alias("c", "merge-commits")
-.describe({
-	"f": "Configuration file",
-	"p": "Git project path",
-	"t": "Commit title regular expression",
-	"m": "Meaning of capturing block in title's regular expression",
-	"b": "Git branch, defaults to master",
-	"s": "External script to rewrite the commit history",
-	"c": "Only use merge commits"
-})
-.boolean("version")
-.check(function (argv) {
-	if (argv._.length == 2) {
-		return true;
-	}
-	throw "Invalid parameters, please specify an interval and the template";
-})
-.argv;
+	.options("f", {
+		"alias": "file"
+	})
+	.options("p", {
+		"alias": "path",
+		"default": process.cwd()
+	})
+	.options("t", {
+		"alias": "title",
+		"default": "(.*)"
+	})
+	.options("z", {
+		"alias": "commitfilter",
+		"default": "(.*)"
+	})
+	.options("m", {
+		"alias": "meaning",
+		"default": ['type']
+	})
+	.options("b", {
+		"alias": "branch",
+		"default": "master"
+	})
+	.options("s", {
+		"alias": "script"
+	})
+	.boolean("c")
+	.alias("c", "merge-commits")
+	.describe({
+		"f": "Configuration file",
+		"p": "Git project path",
+		"t": "Commit title regular expression",
+		"z": "Filter commits based on regular expression applied to against text in title",
+		"m": "Meaning of capturing block in title's regular expression",
+		"b": "Git branch, defaults to master",
+		"s": "External script to rewrite the commit history",
+		"c": "Only use merge commits"
+	})
+	.boolean("version")
+	.check(function (argv) {
+		if (argv._.length == 2) {
+			return true;
+		}
+		throw "Invalid parameters, please specify an interval and the template";
+	})
+	.argv;
 
 var git = require("./lib/git");
 var fs = require("fs");
@@ -87,7 +92,8 @@ fs.readFile(template, function (err, templateContent) {
 				title: new RegExp(options.t),
 				meaning: Array.isArray(options.m) ? options.m: [options.m],
 				cwd: options.p,
-				mergeCommits: options.c
+				mergeCommits: options.c,
+				commitfilter: new RegExp(options.z)
 			}, function (commits) {
 				postProcess(templateContent, commits);
 			});
@@ -110,7 +116,8 @@ function getOptions (callback) {
 						t: stored.t || stored.title || argv.t,
 						m: stored.m || stored.meaning || argv.m,
 						p: stored.p || stored.path || argv.p,
-						c: stored.c || stored.mergeCommits || argv.c
+						c: stored.c || stored.mergeCommits || argv.c,
+						z: stored.z || stored.commitfilter || argv.z
 					};
 				} catch (ex) {
 					console.error("Invalid JSON in configuration file");
