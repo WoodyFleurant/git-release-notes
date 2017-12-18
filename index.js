@@ -11,7 +11,7 @@ var argv = require("optimist").usage("git-release-notes [<options>] <since>..<un
 		"alias": "title",
 		"default": "(.*)"
 	})
-	.options("z", {
+	.options("grep", {
 		"alias": "commit-filter",
 		"default": "(.*)"
 	})
@@ -32,7 +32,7 @@ var argv = require("optimist").usage("git-release-notes [<options>] <since>..<un
 		"f": "Configuration file",
 		"p": "Git project path",
 		"t": "Commit title regular expression",
-		"z": "Filter commits based on regular expression applied to against text in title",
+		"grep": "Filter commits based on regular expression applied to against text in title",
 		"m": "Meaning of capturing block in title's regular expression",
 		"b": "Git branch, defaults to master",
 		"s": "External script to rewrite the commit history",
@@ -93,7 +93,7 @@ fs.readFile(template, function (err, templateContent) {
 				meaning: Array.isArray(options.m) ? options.m: [options.m],
 				cwd: options.p,
 				mergeCommits: options.c,
-				commitFilter: new RegExp(options.z)
+				grep: new RegExp(options.grep)
 			}, function (commits) {
 				postProcess(templateContent, commits);
 			});

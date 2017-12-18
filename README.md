@@ -68,7 +68,7 @@ More advanced options are
 * `f` or `file` JSON Configuration file, better option when you don't want to pass all parameters to the command line, for an example see [options.json](https://github.com/ariatemplates/git-release-notes/blob/master/options.json)
 * `s` or `script` External script for post-processing commits
 * `c` or `merge-commits` List only merge commits, `git log` command is executed with the `--merges` flag instead of `--no-merges`
-* `z` or `commit-filter` Filter out commits based on the regular expression that follows it. The regular expression must be in quotes ""
+* `grep` or `commit-filter` Filter out commits based on the regular expression that follows it. The regular expression must be in quotes ""
 
 #### Title Parsing
 
